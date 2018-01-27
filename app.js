@@ -1,27 +1,28 @@
-var express 		= require("express"),
- 	app 			= express(),
- 	bodyParser 		= require("body-parser"),
- 	mongoose 		= require("mongoose"),
- 	Campground 		= require("./models/campground"), //Schema setup
- 	Comment 		= require("./models/comment"),
- 	User 			= require("./models/user"),
- 	seedDB 			= require("./seeds"),
- 	passport 		= require("passport"),
- 	LocalSrategy 	= require("passport-local"),
- 	methodOverride	= require("method-override"),
- 	flash 			= require("connect-flash");
+const express 				= require("express"),
+ 			app 						= express(),
+ 			bodyParser 			= require("body-parser"),
+ 			mongoose 				= require("mongoose"),
+ 			Campground 			= require("./models/campground"),
+ 			Comment 				= require("./models/comment"),
+ 			User 						= require("./models/user"),
+ 			seedDB 					= require("./seeds"),
+ 			passport 				= require("passport"),
+ 			LocalSrategy 		= require("passport-local"),
+ 			methodOverride	= require("method-override"),
+			flash 					= require("connect-flash"),
+	 		dotenv 					=	require("dotenv");
 
 
+dotenv.config({path: 'variables.env'});
 
-var commentRoutes 		= require("./routes/comments"),
-	campgroundRoutes 	= require("./routes/campgrounds"),
-	indexRoutes 		= require("./routes/index");
+const commentRoutes 		= require("./routes/comments"),
+			campgroundRoutes 	= require("./routes/campgrounds"),
+			indexRoutes 			= require("./routes/index");
 
-//seedDB();
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect("mongodb://localhost/yelp_camp", {useMongoClient: true});
+mongoose.connect(process.env.DB, {useMongoClient: true});
 
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
@@ -30,7 +31,7 @@ app.use(methodOverride("_method"));
 app.use(flash());
 
 app.use(require("express-session")({
-	secret: "dimitris natos",
+	secret: process.env.SECRET,
 	resave: false,
 	saveUninitialized: false
 }));
@@ -52,6 +53,6 @@ app.use(indexRoutes);
 app.use(commentRoutes);
 app.use(campgroundRoutes);
 
-app.listen(3000, function(){
-	console.log("The server start at port 3000");
+app.listen(process.env.PORT, function(){
+	console.log("Server started");
 });
